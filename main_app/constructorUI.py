@@ -87,6 +87,7 @@ class Sidebar(QFrame):
         self.manage_stock_btn.clicked.connect(lambda: self.set_active(self.manage_stock_btn, "manage_stock"))
 
         # --- Options ---
+        self.create_header("") # Create empty header for extra spacing - this makes it look less like it's in the "Stock" category
         self.options_btn = self.create_button("Options")
         self.options_btn.clicked.connect(lambda: self.set_active(self.options_btn, "options"))
 
