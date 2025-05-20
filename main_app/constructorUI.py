@@ -35,13 +35,19 @@ class Sidebar(QFrame):
         self.layout.setSpacing(10)
         self.layout.setContentsMargins(0, 15, 0, 0)
 
-    def create_button(self, text): # to create loads of buttons easy
+    def create_button(self, text, in_header=True): # to create loads of buttons easy
         button = QPushButton(text, self)
         button.setFixedHeight(45)
-        button.setStyleSheet(
-            "QPushButton {background-color: transparent; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 35px;}"
-            "QPushButton:hover {background-color: #0D4A62}"
-            "QPushButton:pressed {background-color: #052B38}")
+        if in_header:
+            button.setStyleSheet(
+                "QPushButton {background-color: transparent; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 35px;}"
+                "QPushButton:hover {background-color: #0D4A62}"
+                "QPushButton:pressed {background-color: #052B38}")
+        else:
+            button.setStyleSheet(
+                "QPushButton {background-color: transparent; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 15px;}"
+                "QPushButton:hover {background-color: #0D4A62}"
+                "QPushButton:pressed {background-color: #052B38}")
         self.layout.addWidget(button)
         return button
 
@@ -51,8 +57,8 @@ class Sidebar(QFrame):
         self.layout.addWidget(label)
 
     def create_btns(self): # the menu buttons and its connections
-        self.main_btn = self.create_button("Main")
-        self.main_btn.clicked.connect(lambda: self.set_active(self.main_btn, "main"))
+        self.main_btn = self.create_button("Main", False)
+        self.main_btn.clicked.connect(lambda: self.set_active(self.main_btn, "main", False))
 
         # --- Recipes ---
         self.create_header("Recipes")
@@ -87,20 +93,31 @@ class Sidebar(QFrame):
         self.manage_stock_btn.clicked.connect(lambda: self.set_active(self.manage_stock_btn, "manage_stock"))
 
         # --- Options ---
-        self.options_btn = self.create_button("Options")
-        self.options_btn.clicked.connect(lambda: self.set_active(self.options_btn, "options"))
+        self.options_btn = self.create_button("Options", False)
+        self.options_btn.clicked.connect(lambda: self.set_active(self.options_btn, "options", False))
 
-    def set_active(self, btn, name): # keep the active button highlighted and switch the window
+    def set_active(self, btn, name, in_header=True): # keep the active button highlighted and switch the window
+        # this function is a complete mess even before my changes, how the fuck does it work
+        # half-broken
         if self.active_btn:
-            self.active_btn.setStyleSheet(
-                "QPushButton {background-color: transparent; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 35px;}"
-                "QPushButton:hover {background-color: #0D4A62}"
-                "QPushButton:pressed {background-color: #052B38}")
-
+            if in_header:
+                self.active_btn.setStyleSheet(
+                    "QPushButton {background-color: transparent; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 35px;}"
+                    "QPushButton:hover {background-color: #0D4A62}"
+                    "QPushButton:pressed {background-color: #052B38}")
+            else:
+                self.active_btn.setStyleSheet(
+                    "QPushButton {background-color: transparent; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 15px;}"
+                    "QPushButton:hover {background-color: #0D4A62}"
+                    "QPushButton:pressed {background-color: #052B38}")
         self.active_btn = btn
         self.active_btn_name = name
-        self.active_btn.setStyleSheet(
-            "QPushButton {background-color: #0D4A62; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 35px;}")
+        if in_header:
+            self.active_btn.setStyleSheet(
+                "QPushButton {background-color: #0D4A62; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 35px;}")
+        else:
+            self.active_btn.setStyleSheet(
+                "QPushButton {background-color: #0D4A62; font-weight: bold; color: white; font-size: 16px; border: none; text-align: left; padding-left: 15px;}")
 
         self.main_window.switch_window(name)
 
@@ -128,7 +145,7 @@ class MainWindow(QMainWindow):
         self.add_all_widgets()
 
         self.stacked_widget.setCurrentWidget(self.main_page)
-        self.sidebar.set_active(self.sidebar.main_btn, "main")
+        self.sidebar.set_active(self.sidebar.main_btn, "main", False)
 
         self.showMaximized()
 
